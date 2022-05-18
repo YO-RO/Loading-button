@@ -31,9 +31,11 @@ class LoginButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(loadingButtonControllerProvider);
-    final isLoading = state is AsyncLoading<void>;
-    ref.listen<AsyncValue<void>>(
+    final state =
+        ref.watch<AsyncValue<Status>>(loadingButtonControllerProvider);
+    final isLoading = state is AsyncLoading<Status>;
+    final noButtonNeeded = state.value == Status.loggedIn;
+    ref.listen<AsyncValue<Status>>(
       loadingButtonControllerProvider,
       (_, state) {
         state.whenOrNull(
@@ -45,13 +47,16 @@ class LoginButton extends ConsumerWidget {
       },
     );
     return ElevatedButton(
-      onPressed: isLoading
+      onPressed: isLoading || noButtonNeeded
           ? null
           : () {
               ref.read(loadingButtonControllerProvider.notifier).login();
             },
-      child:
-          isLoading ? const CircularProgressIndicator() : const Text('login'),
+      child: isLoading
+          ? const CircularProgressIndicator()
+          : noButtonNeeded
+              ? const Text('Logged in!')
+              : const Text('login'),
     );
   }
 }
