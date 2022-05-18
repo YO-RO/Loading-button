@@ -33,6 +33,17 @@ class LoginButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(loadingButtonControllerProvider);
     final isLoading = state is AsyncLoading<void>;
+    ref.listen<AsyncValue<void>>(
+      loadingButtonControllerProvider,
+      (_, state) {
+        state.whenOrNull(
+          error: (error, stackTrace) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('error!')));
+          },
+        );
+      },
+    );
     return ElevatedButton(
       onPressed: isLoading
           ? null
