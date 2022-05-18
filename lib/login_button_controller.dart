@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final loadingButtonControllerProvider =
-    StateNotifierProvider<LoadingButtonController, AsyncValue<Status>>(
-        (ref) => LoadingButtonController());
+final loadingButtonControllerProvider = StateNotifierProvider.autoDispose<
+    LoadingButtonController,
+    AsyncValue<Status>>((ref) => LoadingButtonController());
 
 enum Status {
   loggedOut,

@@ -7,11 +7,11 @@ void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Loading Button',
       debugShowCheckedModeBanner: false,
@@ -19,8 +19,19 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         primarySwatch: Colors.grey,
       ),
-      home: const Scaffold(
-        body: Center(child: LoginButton()),
+      home: Scaffold(
+        body: Center(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const LoginButton(),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => ref.refresh(loadingButtonControllerProvider),
+              child: const Text('reset'),
+            )
+          ],
+        )),
       ),
     );
   }
@@ -49,9 +60,7 @@ class LoginButton extends ConsumerWidget {
     return ElevatedButton(
       onPressed: isLoading || noButtonNeeded
           ? null
-          : () {
-              ref.read(loadingButtonControllerProvider.notifier).login();
-            },
+          : () => ref.read(loadingButtonControllerProvider.notifier).login(),
       child: isLoading
           ? const CircularProgressIndicator()
           : noButtonNeeded
